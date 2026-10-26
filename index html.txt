@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Маховик - Трекер целей</title>
+<style>
+:root {
+--bg-color: #000000;
+--text-color: #ffffff;
+--accent-color: #ff0000;
+--secondary-color: #333333;
+}
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: var(--bg-color);
+color: var(--text-color);
+margin: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+min-height: 100vh;
+}
+header {
+width: 100%;
+padding: 20px;
+text-align: center;
+border-bottom: 2px solid var(--accent-color);
+}
+h1 {
+color: var(--accent-color);
+margin: 0;
+font-size: 2em;
+}
+.main-goal-section {
+margin: 30px 0;
+text-align: center;
+}
+#main-goal {
+font-size: 1.5em;
+border-bottom: 2px solid var(--text-color);
+padding: 5px;
+cursor: pointer;
+}
+.flywheel-container {
+position: relative;
+width: 300px;
+height: 300px;
+margin: 20px 0;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+#flywheel {
+width: 100%;
+height: 100%;
+transition: transform 0.5s ease-out;
+}
+.speed-display {
+font-size: 1.5em;
+color: var(--accent-color);
+margin-bottom: 30px;
+}
+.tasks-container {
+width: 90%;
+max-width: 500px;
+margin-bottom: 30px;
+}
+.day-section {
+margin-bottom: 20px;
+background-color: var(--secondary-color);
+padding: 15px;
+border-radius: 8px;
+}
+.day-title {
+color: var(--accent-color);
+font-weight: bold;
+margin-bottom: 10px;
+display: block;
+border-bottom: 1px solid var(--accent-color);
+padding-bottom: 5px;
+}
+.task-item {
+display: flex;
+align-items: center;
+margin: 10px 0;
+}
+.task-checkbox {
+margin-right: 15px;
+transform: scale(1.5);
+accent-color: var(--accent-color);
+}
+.task-input {
+background: transparent;
+border: 1px solid #444;
+color: var(--text-color);
+padding: 5px;
+width: 100%;
+border-radius: 4px;
+}
+.completed {
+text-decoration: line-through;
+color: #888;
+}
+.analytics-button {
+background-color: var(--accent-color);
+color: var(--text-color);
+padding: 15px 30px;
+border: none;
+border-radius: 5px;
+font-size: 1em;
+cursor: pointer;
+text-decoration: none;
+margin-bottom: 30px;
+font-weight: bold;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>МАХОВИК</h1>
+</header>
+<div class="main-goal-section">
+<label for="main-goal">Ваша главная цель:</label>
+<div id="main-goal" contenteditable="true">Кликните сюда, чтобы изменить цель</div>
+</div>
+<div class="speed-display">
+Скорость: <span id="speed">0</span> км/ч
+</div>
+<div class="flywheel-container">
+<svg id="flywheel" viewBox="0 0 100 100" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
+<circle cx="50" cy="50" r="45" fill="none" stroke="#222" stroke-width="10"/>
+<!-- Зубья маховика -->
+<path d="M50 0 L55 5 L50 10 L45 5 Z" fill="var(--accent-color)" />
+<path d="M100 50 L95 55 L90 50 L95 45 Z" fill="var(--accent-color)" />
+<path d="M50 100 L45 95 L50 90 L55 95 Z" fill="var(--accent-color)" />
+<path d="M0 50 L5 45 L10 50 L5 55 Z" fill="var(--accent-color)" />
+<!-- Внутреннее кольцо -->
+<circle cx="50" cy="50" r="30" fill="none" stroke="var(--accent-color)" stroke-width="2"/>
+<!-- Центр маховика -->
+<circle cx="50" cy="50" r="10" fill="var(--text-color)"/>
+</svg>
+</div>
+<div class="tasks-container" id="days-container">
+<!-- Секции дней будут добавлены через JavaScript -->
+</div>
+<a href="analytics.html" class="analytics-button">АНАЛИТИКА</a>
+<script>
+const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+let speed = 0;
+let totalCompleted = 0;
+const daysContainer = document.getElementById('days-container');
+const speedDisplay = document.getElementById('speed');
+const flywheel = document.getElementById('flywheel');
+function createDays() {
+days.forEach((day, dayIndex) => {
+const daySection = document.createElement('div');
+daySection.className = 'day-section';
+daySection.innerHTML = <span class="day-title">${day}</span>;
+for (let i = 1; i <= 3; i++) {
+const taskItem = document.createElement('div');
+taskItem.className = 'task-item';
+taskItem.innerHTML = <input type="ch
+SVG namespace
+www.w3.org
+
+
+eckbox" class="task-checkbox" onchange="updateProgress(this)"> <input type="text" class="task-input" placeholder="Задача ${i}">;
+daySection.appendChild(taskItem);
+}
+daysContainer.appendChild(daySection);
+});
+}
+function updateProgress(checkbox) {
+const taskInput = checkbox.nextElementSibling;
+if (checkbox.checked) {
+taskInput.classList.add('completed');
+speed += 30;
+totalCompleted++;
+rotateFlywheel();
+} else {
+taskInput.classList.remove('completed');
+if (speed >= 30) speed -= 30;
+totalCompleted--;
+}
+speedDisplay.innerText = speed;
+saveData();
+}
+function rotateFlywheel() {
+flywheel.style.transform = rotate(${speed * 2}deg);
+}
+function saveData() {
+const tasksData = [];
+document.querySelectorAll('.day-section').forEach(section => {
+const day = section.querySelector('.day-title').innerText;
+const tasks = [];
+section.querySelectorAll('.task-item').forEach(item => {
+tasks.push({
+text: item.querySelector('.task-input').value,
+completed: item.querySelector('.task-checkbox').checked
+});
+});
+tasksData.push({ day, tasks });
+});
+localStorage.setItem('flywheelTasks', JSON.stringify(tasksData));
+localStorage.setItem('flywheelSpeed', speed);
+localStorage.setItem('mainGoal', document.getElementById('main-goal').innerText);
+}
+function loadData() {
+const savedTasks = JSON.parse(localStorage.getItem('flywheelTasks'));
+const savedSpeed = localStorage.getItem('flywheelSpeed');
+const savedGoal = localStorage.getItem('mainGoal');
+if (savedSpeed) {
+speed = parseInt(savedSpeed);
+speedDisplay.innerText = speed;
+rotateFlywheel();
+}
+if (savedGoal) {
+document.getElementById('main-goal').innerText = savedGoal;
+}
+if (savedTasks) {
+const sections = document.querySelectorAll('.day-section');
+sections.forEach((section, index) => {
+const savedDay = savedTasks[index];
+if (savedDay) {
+const items = section.querySelectorAll('.task-item');
+items.forEach((item, itemIndex) => {
+const savedTask = savedDay.tasks[itemIndex];
+if (savedTask) {
+item.querySelector('.task-input').value = savedTask.text;
+item.querySelector('.task-checkbox').checked = savedTask.completed;
+if (savedTask.completed) {
+item.querySelector('.task-input').classList.add('completed');
+}
+}
+});
+}
+});
+}
+}
+document.getElementById('main-goal').addEventListener('input', saveData);
+createDays();
+loadData();
+</script>
+</body>
+</html>
